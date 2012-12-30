@@ -170,7 +170,7 @@ class Serwer(object):
 					for i in range(4):
 						for client in self.gracze:
 							self.send(self.odliczaj(i,self.gracze[client]),client)
-							time.sleep(1)
+						time.sleep(1)
 
 					while 1:
 						if self.koniec:

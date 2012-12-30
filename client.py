@@ -21,11 +21,14 @@ class gracz(pygame.sprite.Sprite):
 		self.ID = None
 		self.run = True
 		self.resss = True
+		self.map = pygame.image.load('plik.jpg')
+		self.mine = pygame.image.load('mine.png')
+		self.plist = [pygame.image.load(str(x)+'.png') for x in range(1,3)]
   
   	def send(self,dane):
 		_, toWrite, _ = select.select([], [self.soc], [])
 		data = toWrite[0].sendall( cPickle.dumps( dane ) )
-		if data: raise Exception("Problem z wyslaniem msg do socketu: %s" %data)
+		if data: raise Exception("Problem with sending data to the socket: %s" %data)
   
   	def receive(self):
 		toRead, _, _ = select.select([self.soc], [], [])
@@ -41,11 +44,12 @@ class gracz(pygame.sprite.Sprite):
 		return data
 	
   	def draw(self,scr,i,pos):
-		i += 1
-		if i == 1:
-	  		os = pygame.image.load('gr.png').convert_alpha()
-		else:
-	  		os = pygame.image.load('gr2.png').convert_alpha()
+  		os = self.plist[i].convert_alpha()
+		#i += 1
+		#if i == 1:
+	  	#	os = pygame.image.load('gr.png').convert_alpha()
+		#else:
+	  	#	os = pygame.image.load('gr2.png').convert_alpha()
 		scr.blit(os, pos)
 	
   	def update(self):
@@ -73,11 +77,11 @@ class gracz(pygame.sprite.Sprite):
 
 	  		elif isinstance(data,Map):
 				warstwa = pygame.image.load('plik.jpg').convert_alpha()
-				b = pygame.image.load('gr.png').convert_alpha()
+				b = pygame.image.load('mine.png').convert_alpha()
 				for i in data.mines:
 		  			warstwa.blit(b,i.position)
 				for i,pos in enumerate(data.playersPositions):
-		  			self.draw(warstwa,(i,pos.x,pos.y))
+		  			self.draw(warstwa,i,(pos.x,pos.y))
 				pressed_keys = pygame.key.get_pressed()
 				for event in pygame.event.get():
 		  			if event.type == QUIT:
