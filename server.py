@@ -1,7 +1,7 @@
 #!/usr/bin/env python 
 import select, socket, sys, cPickle, time
 from protocolObjects import *
-#dsadada
+
 class Serwer(object):
 	def __init__(self):
 		if len(sys.argv) != 2:
