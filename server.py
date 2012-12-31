@@ -16,7 +16,7 @@ class Serwer(object):
 		Map.playersPositions = []
 		Map.mines = []
 		self.pkt = 0
-		self.mapSize = 640,480
+		self.mapSize = 500,500
 		self.odwiedzone = []
 
 		self.run = True
@@ -47,11 +47,11 @@ class Serwer(object):
 		if i == 0:
 			obiekt=Countdown(3,self.mapSize,id)
 			if id == 0:
-				x = 5
-				y = 5
+				x = 0
+				y = 0
 			elif id == 1:
-				x =605
-				y =445
+				x =500-50
+				y =500-50
 			Map.playersPositions.append(Position(y,x))
 								
 		if i == 1:
@@ -64,73 +64,74 @@ class Serwer(object):
 	def fun_res(self,x,y):
 		if (x, y) not in self.odwiedzone:
 			(self.odwiedzone).append((x, y))
-			if x >=0 and x<640 and y >= 0 and y < 480:
+			if x >=0 and x<500 and y >= 0 and y < 500:
 				self.dod = True
 				for i in self.miny:
 					if (x, y) == i.position:
 						self.dod = False
 				if self.dod:
 					self.pkt += 1
-					self.fun_res(x - 40, y)
-					self.fun_res(x + 40, y)
-					self.fun_res(x, y - 40)
-					self.fun_res(x, y + 40)
+					print(self.pkt,x,y)
+					self.fun_res(x - 50, y)
+					self.fun_res(x + 50, y)
+					self.fun_res(x, y - 50)
+					self.fun_res(x, y + 50)
 	
 	def akcja(self,id,data):
 		x=(Map.playersPositions[id]).x
 		y=(Map.playersPositions[id]).y
 		if data == 'up':
-			if y > 40:
-				if (Position(y-40,x)) not in Map.playersPositions:
-					Map.playersPositions[(id)] = Position(y-40,x)
+			if y >= 50:
+				if (Position(y-50,x)) not in Map.playersPositions:
+					Map.playersPositions[(id)] = Position(y-50,x)
 				for i in self.miny:
-					if (x,y-40) == i.position:
-						k = (id + 1) % len(gracze)
+					if (x,y-50) == i.position:
+						k = (id + 1) % len(self.gracze)
 						Result.winners = k
 						Result.scores = 'max'
 						return Result(Result.winners,Result.scores)
 		elif data == 'down':
-			if y < 440:
-				if (Position(y+40,x)) not in Map.playersPositions:
-					Map.playersPositions[(id)] = Position(y+40,x)
+			if y < 450:
+				if (Position(y+50,x)) not in Map.playersPositions:
+					Map.playersPositions[(id)] = Position(y+50,x)
 				for i in self.miny:
-					if (x,y+40) == i.position:
-						k = (id + 1) % len(gracze)
+					if (x,y+50) == i.position:
+						k = (id + 1) % len(self.gracze)
 						Result.winners = k
 						Result.scores = 'max'
 						return Result(Result.winners,Result.scores)
 		elif data == 'right':
-			if x < 600:
-				if (Position(y,x+40)) not in Map.playersPositions:
-					Map.playersPositions[(id)] = Position(y,x+40)
+			if x < 450:
+				if (Position(y,x+50)) not in Map.playersPositions:
+					Map.playersPositions[(id)] = Position(y,x+50)
 				for i in self.miny:
-					if (x+40,y) == i.position:
-						k = (id + 1) % len(gracze)
+					if (x+50,y) == i.position:
+						k = (id + 1) % len(self.gracze)
 						Result.winners = k
 						Result.scores = 'max'
 						return Result(Result.winners,Result.scores)
 		elif data == 'left':
-			if x > 40:
-				if (Position(y,x-40)) not in Map.playersPositions:
-					Map.playersPositions[(id)] = Position(y,x-40)
+			if x >= 50:
+				if (Position(y,x-50)) not in Map.playersPositions:
+					Map.playersPositions[(id)] = Position(y,x-50)
 				for i in self.miny:
-					if (x-40,y) == i.position:
-						k = (id + 1) % len(gracze)
+					if (x-50,y) == i.position:
+						k = (id + 1) % len(self.gracze)
 						Result.winners = k
 						Result.scores = 'max'
 						return Result(Result.winners,Result.scores)
 		elif data == 'result':
 			makss = (0,0)
-			for client in gracze:
+			for client in self.gracze:
 				self.pkt = 0
 				self.odwiedzone = []
-				xx = (Map.playersPositions[gracze[client]]).x
-				yy = (Map.playersPositions[gracze[client]]).y
+				xx = (Map.playersPositions[self.gracze[client]]).x
+				yy = (Map.playersPositions[self.gracze[client]]).y
 				self.fun_res(xx,yy)
 				if makss[0] < self.pkt:
-					makss = (self.pkt, gracze[client])
+					makss = (self.pkt, self.gracze[client])
 				elif makss[0] == self.pkt:
-					k = (id + 1) % len(gracze)
+					k = (id + 1) % len(self.gracze)
 					makss = (self.pkt, k)
 				self.odwiedzone = []
 			Result.winners = makss[1]
@@ -140,12 +141,12 @@ class Serwer(object):
 		elif data == 'none':
 			Map.playersPositions[(id)] = Position(y,x)
 		elif data == 'koniec':
-			for client in gracze:
+			for client in self.gracze:
 				self.send('koniec',client)
 			self.server.close()
 		elif data == 'bomb':
 			self.warunek = True
-			if x%40 == 5 and y%40 == 5:
+			if x%50 == 0 and y%50 == 0:
 				for i in self.miny:
 					if i.position == (x, y):
 						self.warunek = False

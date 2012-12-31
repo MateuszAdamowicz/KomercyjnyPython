@@ -21,7 +21,7 @@ class gracz(pygame.sprite.Sprite):
 		self.ID = None
 		self.run = True
 		self.resss = True
-		self.map = pygame.image.load('plik.jpg')
+		self.map = pygame.image.load('map.png')
 		self.mine = pygame.image.load('mine.png')
 		self.plist = [pygame.image.load(str(x)+'.png') for x in range(1,3)]
   
@@ -45,11 +45,6 @@ class gracz(pygame.sprite.Sprite):
 	
   	def draw(self,scr,i,pos):
   		os = self.plist[i].convert_alpha()
-		#i += 1
-		#if i == 1:
-	  	#	os = pygame.image.load('gr.png').convert_alpha()
-		#else:
-	  	#	os = pygame.image.load('gr2.png').convert_alpha()
 		scr.blit(os, pos)
 	
   	def update(self):
@@ -67,8 +62,8 @@ class gracz(pygame.sprite.Sprite):
 		  			pygame.init()
 		  			screen = pygame.display.set_mode((data.mapSize[0], data.mapSize[1]))
 		  			self.ID = data.playerId
-		  			pygame.display.set_caption("gracz " + str(self.ID+1))
-		  			font = pygame.font.Font("CatShop.ttf", 72)
+		  			pygame.display.set_caption("Player " + str(self.ID+1))
+		  			font = pygame.font.Font(None, 72)
 				tekst = font.render(str(data.number),True,(0,0,0))
 				screen.fill((250,250,250))
 				screen.blit(tekst,(300,200))
@@ -76,7 +71,7 @@ class gracz(pygame.sprite.Sprite):
 				PlayerAction.action = 'n'
 
 	  		elif isinstance(data,Map):
-				warstwa = pygame.image.load('plik.jpg').convert_alpha()
+				warstwa = pygame.image.load('map.png').convert_alpha()
 				b = pygame.image.load('mine.png').convert_alpha()
 				for i in data.mines:
 		  			warstwa.blit(b,i.position)
@@ -105,9 +100,9 @@ class gracz(pygame.sprite.Sprite):
 				self.send(PlayerAction.action)
 	  
 	  		elif isinstance(data,Result):
-				tekst = font.render('Koniec',True, (30,100,200))
-				tekst2 = font.render('Wygral gracz: ' + str(data.winners + 1), True, (0,0,0))
-				tekst3 = font.render('Wynik: ' + str(data.scores), True, (0,0,0))
+				tekst = font.render('Game Over',True, (30,100,200))
+				tekst2 = font.render('Winner: Player ' + str(data.winners + 1), True, (0,0,0))
+				tekst3 = font.render('Score: ' + str(data.scores), True, (0,0,0))
 				screen.fill((250,250,250))
 				screen.blit(tekst,(50,50))
 				screen.blit(tekst2,(50,200))
